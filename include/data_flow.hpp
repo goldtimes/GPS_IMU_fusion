@@ -9,8 +9,13 @@ class DataFlow {
     DataFlow() = default;
     DataFlow(const std::string& work_dir);
 
-    void Run();
-    void ReadData();
+    /**
+     * imu和gps时间同步
+     */
+    bool sync_data();
+
+    bool Run();
+    bool ReadData();
     void SavePose(std::ofstream& of, const Eigen::Matrix4d& pose);
 
    private:
@@ -22,8 +27,8 @@ class DataFlow {
     std::deque<IMUData> imu_data_buff_;
 
     // 时间同步的imu和gps
-    IMUData imu_data;
-    GPSData gps_data;
+    IMUData sync_imu_data;
+    GPSData sync_gps_data;
 
     const std::string work_dir_path_;  // const 变量需要在构造函数前初始化
     std::string data_path_;

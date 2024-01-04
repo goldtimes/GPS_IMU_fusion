@@ -13,6 +13,12 @@ class GPSFlow {
    public:
     GPSFlow() = default;
 
+    Eigen::Vector3d LLA2ENU(const Eigen::Vector3d& lla) {
+        Eigen::Vector3d enu;
+        geo_converter_.Forward(lla[0], lla[1], lla[2], enu[0], enu[1], enu[2]);
+        return enu;
+    }
+
     void LLA2ENU(GPSData& gpd_data);
 
     Eigen::Vector3d LLA2ENU(const Eigen::Vector3d& lla);

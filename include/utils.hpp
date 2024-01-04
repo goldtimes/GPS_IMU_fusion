@@ -25,3 +25,11 @@ inline Eigen::Matrix3d skew(const Eigen::Vector3d& vec) {
     // clang-format on
     return matrix;
 }
+
+inline Eigen::Matrix4d Vector2Matrix(const Eigen::Vector3d& vec) {
+    Eigen::Matrix4d matrix = Eigen::Matrix4d::Identity();
+    matrix.block<3, 1>(0, 3) = vec;
+    return matrix;
+}
+
+inline Eigen::Vector3d LLA2ENU(const Eigen::Vector3d& lla) {}
