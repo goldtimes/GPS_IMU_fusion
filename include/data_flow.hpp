@@ -1,34 +1,30 @@
 #pragma once
 
-#include <deque>
-#include <iostream>
-#include <string>
-#include "3rd/GeographicLib/include/Geocentric/LocalCartesian.hpp"
-#include "sensor.hpp"
+#include <memory>
+#include "data_read.hpp"
+#include "filter_interfaces.hpp"
 
-/**
- * @brief 读取gps数据
- */
-class GPSFlow {
+class DataFlow {
    public:
-    GPSFlow() = default;
+    DataFlow() = default;
+    DataFlow(const std::string& work_dir);
 
-    void LLA2ENU(GPSData& gpd_data);
-
-    Eigen::Vector3d LLA2ENU(const Eigen::Vector3d& lla);
-
-    bool ReadGPSData(const std::string& file_path, std::deque<GPSData>& gps_datas, const int skip_rows = 1);
+    void Run();
+    void ReadData();
+    void SavePose(std::ofstream& of, const Eigen::Matrix4d& pose);
 
    private:
-    GeographicLib::LocalCartesian geo_converter_{30.0, 120.0, 0.0};
-};
+    std::shared_ptr<FilterInterface> filter_ptr_;  // 滤波器
+    std::shared_ptr<IMUFlow> imu_flow_ptr_;
+    std::shared_ptr<GPSFlow> gps_flow_ptr_;
 
-/**
- * @brief 读取imu数据
- */
-class IMUFlow {
-   public:
-    IMUFlow() = default;
+    std::deque<GPSData> gps_data_buff_;
+    std::deque<IMUData> imu_data_buff_;
 
-    bool ReadIMUData(const std::string& file_path, std::deque<IMUData>& imu_datas, const int skip_rows = 1);
+    // 时间同步的imu和gps
+    IMUData imu_data;
+    GPSData gps_data;
+
+    const std::string work_dir_path_;  // const 变量需要在构造函数前初始化
+    std::string data_path_;
 };
