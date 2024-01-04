@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "defines": [],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "/usr/include/opencv4",
+                "/usr/include/x86_64-linux-gnu/c++/9",
+                "/usr/include/eigen3",
+                "/opt/ros/noetic/include",
+                "/home/GPS_IMU_fusion/include/**",
+                "/home/GPS_IMU_fusion/3rd/**",
+                "${workspaceFolder}"
+            ]
+        }
+    ],
+    "version": 4
+}
