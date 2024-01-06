@@ -20,8 +20,8 @@ class FilterInterface {
     /**
      * @brief 利用观测更新
      */
-    virtual bool correct(const GPSData& gps_data) = 0;
+    virtual bool Correct(const GPSData& gps_data) = 0;
 
-    virtual Eigen::Matrix4d GetPose() = 0;
-    virtual Eigen::Vector3d GetVelocity() = 0;
+    virtual Eigen::Matrix4d GetPose() const = 0;
+    virtual Eigen::Vector3d GetVelocity() const = 0;
 };
