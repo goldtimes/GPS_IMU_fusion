@@ -3,6 +3,9 @@
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <string>
+#include "config_parameters.hpp"
+#include "ekf.hpp"
+#include "eskf.hpp"
 #include "filter_interfaces.hpp"
 #include "utils.hpp"
 
@@ -11,6 +14,14 @@ DataFlow::DataFlow(const std::string& work_dir) : work_dir_path_(work_dir) {
     YAML::Node config_node = YAML::LoadFile(config_file_path);
     data_path_ = config_node["data_path"].as<std::string>();
     std::string filter_name = config_node["filter_name"].as<std::string>();
+    if (filter_name == "EKF") {
+        filter_ptr_ = std::make_shared<EKF>(config_node);
+    } else if (filter_name == "ESKF") {
+        std::string eskf_config = work_dir + "/config/eskf.yaml";
+        ConfigParameters config_params;
+        config_params.LoadParameters(eskf_config);
+        filter_ptr_ = std::make_shared<ESKF>(config_params);
+    }
     // 初始化滤波器
     std::cout << "data_path_:" << data_path_ << "filter_method:" << filter_name << std::endl;
 }
@@ -72,7 +83,7 @@ bool DataFlow::Run() {
             imu_data_buff_.pop_front();
         } else {
             // 利用gps数据修正滤波器
-            filter_ptr_->correct(sync_gps_data);
+            filter_ptr_->Correct(sync_gps_data);
             SavePose(fused_file, filter_ptr_->GetPose());
             SavePose(measured_file, Vector2Matrix(sync_gps_data.position_enu));
             SavePose(gt_file, Vector2Matrix(gps_flow_ptr_->LLA2ENU(sync_gps_data.true_lla)));

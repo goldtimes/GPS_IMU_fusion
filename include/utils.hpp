@@ -32,4 +32,25 @@ inline Eigen::Matrix4d Vector2Matrix(const Eigen::Vector3d& vec) {
     return matrix;
 }
 
+template <typename Derived>
+Eigen::Matrix<typename Derived::Scalar, 3, 3> BuildSkewSymmetricMatrix(const Eigen::MatrixBase<Derived>& vec) {
+    Eigen::Matrix<typename Derived::Scalar, 3, 3> matrix;
+    matrix << static_cast<typename Derived::Scalar>(0.0), -vec[2], vec[1], vec[2], static_cast<typename Derived::Scalar>(0.0), -vec[0], -vec[1],
+        vec[0], static_cast<typename Derived::Scalar>(0.0);
+
+    return matrix;
+}
+
+template <typename Derived>
+inline Eigen::Matrix<typename Derived::Scalar, 3, 3> SO3Exp(const Eigen::MatrixBase<Derived>& v) {
+    Eigen::Matrix<typename Derived::Scalar, 3, 3> R;
+    typename Derived::Scalar theta = v.norm();
+    Eigen::Matrix<typename Derived::Scalar, 3, 1> v_normalized = v.normalized();
+    R = std::cos(theta) * Eigen::Matrix<typename Derived::Scalar, 3, 3>::Identity() +
+        (typename Derived::Scalar(1.0) - std::cos(theta)) * v_normalized * v_normalized.transpose() +
+        std::sin(theta) * BuildSkewSymmetricMatrix(v_normalized);
+
+    return R;
+}
+
 inline Eigen::Vector3d LLA2ENU(const Eigen::Vector3d& lla) {}
